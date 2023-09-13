@@ -6,36 +6,36 @@ class GoogleSheetApi{
 }
 ''';
 
-//SpreadSheet Id
+
   static final _spreadsheetId = '1rGfMdof9Mj2zuv69us8XsjYnRJMFWnQ8lS-6r8CDsJg';
   static final _gsheets = GSheets(_credentials);
   static Worksheet? _worksheet;
-//Variable for tracking
 
-  // some variables to keep track of..
+
+
   static int numberOfTransactions = 0;
   static List<List<dynamic>> currentTransactions = [];
   static bool loading = true;
 
-  // initialise the spreadsheet!
+
   Future init() async {
     final ss = await _gsheets.spreadsheet(_spreadsheetId);
     _worksheet = ss.worksheetByTitle('worksheet1');
     countRows();
   }
 
-  // count the number of notes
+
   static Future countRows() async {
     while ((await _worksheet!.values
         .value(column: 1, row: numberOfTransactions + 1)) !=
         '') {
       numberOfTransactions++;
     }
-    // now we know how many notes to load, now let's load them!
+
     loadTransactions();
   }
 
-  // load existing notes from the spreadsheet
+
   static Future loadTransactions() async {
     if (_worksheet == null) return;
 
@@ -56,11 +56,11 @@ class GoogleSheetApi{
       }
     }
     print(currentTransactions);
-    // this will stop the circular loading indicator
+
     loading = false;
   }
 
-  // insert a new transaction
+
   static Future insert(String name, String amount, bool _isIncome) async {
     if (_worksheet == null) return;
     numberOfTransactions++;
@@ -76,7 +76,6 @@ class GoogleSheetApi{
     ]);
   }
 
-  // CALCULATE THE TOTAL INCOME!
   static double calculateIncome() {
     double totalIncome = 0;
     for (int i = 0; i < currentTransactions.length; i++) {
@@ -87,7 +86,6 @@ class GoogleSheetApi{
     return totalIncome;
   }
 
-  // CALCULATE THE TOTAL EXPENSE!
   static double calculateExpense() {
     double totalExpense = 0;
     for (int i = 0; i < currentTransactions.length; i++) {
